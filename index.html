@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An interactive corpus explorer for English-Chinese nominalization in subtitles.">
+  <title>NV Atlas | Nominalization in Subtitles</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#explorer" aria-label="NV Atlas home">
+      <span class="brand-mark">NV</span>
+      <span><strong>NV Atlas</strong><small>Translation corpus explorer</small></span>
+    </a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="#explorer" data-i18n="navExplorer">Explorer</a>
+      <a href="#report" data-i18n="navReport">Report</a>
+      <a href="#codebook" data-i18n="navCodebook">Codebook</a>
+      <a href="#declaration" data-i18n="navDeclaration">AI use</a>
+    </nav>
+    <div class="language-switch" role="group" aria-label="Language">
+      <button type="button" class="lang-btn active" data-lang="en">EN</button>
+      <button type="button" class="lang-btn" data-lang="zh">繁中</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="explorer">
+      <div class="hero-copy">
+        <p class="eyebrow" data-i18n="eyebrow">A 500-pair subtitle corpus</p>
+        <h1 data-i18n="heroTitle">When a noun becomes a verb.</h1>
+        <p class="hero-lede" data-i18n="heroLede">Explore how English nominalizations are recast in Simplified Chinese subtitles, and what those shifts reveal about translation strategy.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#visualizations" data-i18n="exploreButton">Explore the data</a>
+          <a class="button secondary" href="#report" data-i18n="readReport">Read the report</a>
+        </div>
+      </div>
+      <div class="hero-stat" aria-label="Corpus summary">
+        <span class="stat-number">500</span>
+        <span class="stat-label" data-i18n="sentencePairs">sentence pairs</span>
+        <div class="stat-rule"></div>
+        <span class="stat-number">3</span>
+        <span class="stat-label" data-i18n="strategyCategories">strategy categories</span>
+      </div>
+    </section>
+
+    <section class="explorer-shell" aria-labelledby="explorerHeading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow" data-i18n="corpusEyebrow">Corpus explorer</p>
+          <h2 id="explorerHeading" data-i18n="explorerTitle">Search the translation record</h2>
+        </div>
+        <p class="section-note" data-i18n="explorerNote">Every view responds to the same search and filters. Select a term to link the views.</p>
+      </div>
+
+      <div class="controls" role="search">
+        <label class="search-field">
+          <span class="sr-only" data-i18n="searchLabel">Search the corpus</span>
+          <svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+          <input id="searchInput" type="search" autocomplete="off" placeholder="Search English, Chinese, or key term" data-i18n-placeholder="searchPlaceholder">
+        </label>
+        <label class="select-field">
+          <span data-i18n="categoryLabel">Category</span>
+          <select id="categoryFilter">
+            <option value="all" data-i18n="allCategories">All categories</option>
+            <option value="verb_recast" data-i18n="catVerb">Verb recast</option>
+            <option value="nominal_retained" data-i18n="catNominal">Nominal retained</option>
+            <option value="light_verb" data-i18n="catLight">Light verb frame</option>
+          </select>
+        </label>
+        <label class="select-field">
+          <span data-i18n="checkedLabel">Human checked</span>
+          <select id="checkedFilter">
+            <option value="all" data-i18n="allEntries">All entries</option>
+            <option value="yes" data-i18n="checkedYes">Checked</option>
+            <option value="no" data-i18n="checkedNo">Not checked</option>
+          </select>
+        </label>
+        <button class="button quiet" id="resetButton" type="button" data-i18n="reset">Reset</button>
+      </div>
+
+      <div class="active-view" aria-live="polite">
+        <span id="resultCount">500 entries</span>
+        <span class="active-term-wrap" id="activeTermWrap" hidden>
+          <span data-i18n="selectedTerm">Selected term</span>
+          <button type="button" id="activeTerm" class="term-chip"></button>
+        </span>
+      </div>
+
+      <div class="visual-grid" id="visualizations">
+        <article class="panel panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="panel-kicker" data-i18n="networkKicker">Relational view</p>
+              <h3 data-i18n="networkTitle">English term to Chinese rendering</h3>
+            </div>
+            <div class="panel-controls">
+              <label><span data-i18n="topTerms">Top terms</span><input id="topTerms" type="range" min="5" max="30" value="18" step="1"><output id="topTermsValue">18</output></label>
+              <label><span data-i18n="minLink">Min. link weight</span><input id="minLink" type="range" min="1" max="8" value="1" step="1"><output id="minLinkValue">1</output></label>
+            </div>
+          </div>
+          <p class="caption" data-i18n="networkCaption">Which English nominalizations have the widest range of Chinese renderings?</p>
+          <div class="chart network-chart" id="networkChart" role="img" aria-label="Interactive network graph"></div>
+          <p class="chart-hint" data-i18n="networkHint">Click a node to filter the corpus. Drag nodes to rearrange; scroll to zoom.</p>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="panel-kicker" data-i18n="treemapKicker">Hierarchical view</p>
+              <h3 data-i18n="treemapTitle">Strategy by key term</h3>
+            </div>
+          </div>
+          <p class="caption" data-i18n="treemapCaption">Which translation strategies dominate the most frequent English terms?</p>
+          <div class="chart treemap-chart" id="treemapChart" role="img" aria-label="Interactive treemap"></div>
+          <p class="chart-hint" data-i18n="treemapHint">Click a tile to select its English term.</p>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="panel-kicker" data-i18n="heatmapKicker">Distributional view</p>
+              <h3 data-i18n="heatmapTitle">Strategy across top terms</h3>
+            </div>
+          </div>
+          <p class="caption" data-i18n="heatmapCaption">Where do the three strategies concentrate across the most frequent terms?</p>
+          <div class="chart heatmap-chart" id="heatmapChart" role="img" aria-label="Interactive heatmap"></div>
+          <p class="chart-hint" data-i18n="heatmapHint">Click a cell to select a term and strategy.</p>
+        </article>
+
+        <article class="panel panel-wide">
+          <div class="panel-head">
+            <div>
+              <p class="panel-kicker" data-i18n="kwicKicker">Lexical view</p>
+              <h3 data-i18n="kwicTitle">Key word in context</h3>
+            </div>
+            <label class="inline-select"><span data-i18n="contextTerm">Term</span><select id="kwicTerm"></select></label>
+          </div>
+          <p class="caption" data-i18n="kwicCaption">How does the selected English term appear in its surrounding subtitle line?</p>
+          <div class="kwic-list" id="kwicList"></div>
+        </article>
+      </div>
+
+      <article class="panel table-panel">
+        <div class="panel-head">
+          <div>
+            <p class="panel-kicker" data-i18n="tableKicker">Tabular view</p>
+            <h3 data-i18n="tableTitle">Corpus entries</h3>
+          </div>
+          <button class="button secondary small" id="exportButton" type="button" data-i18n="exportCsv">Export CSV</button>
+        </div>
+        <p class="caption" data-i18n="tableCaption">Which sentence pairs support the pattern, and how were they classified?</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th><button type="button" data-sort="id" data-i18n="thId">ID</button></th>
+                <th><button type="button" data-sort="source_text" data-i18n="thEnglish">English</button></th>
+                <th><button type="button" data-sort="target_text" data-i18n="thChinese">Chinese</button></th>
+                <th><button type="button" data-sort="key_term" data-i18n="thTerm">Key term</button></th>
+                <th><button type="button" data-sort="category" data-i18n="thCategory">Category</button></th>
+                <th><button type="button" data-sort="human_checked" data-i18n="thChecked">Checked</button></th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <button class="button quiet small" id="prevPage" type="button" data-i18n="previous">Previous</button>
+          <span id="pageInfo">Page 1 of 1</span>
+          <button class="button quiet small" id="nextPage" type="button" data-i18n="next">Next</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="prose-section" id="report">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow" data-i18n="reportEyebrow">Learning report</p>
+          <h2 data-i18n="reportTitle">From a repeated noun to a translation pattern</h2>
+        </div>
+      </div>
+      <div class="report-layout">
+        <aside class="report-aside">
+          <p class="aside-label" data-i18n="contents">Contents</p>
+          <a href="#origin" data-i18n="origin">Origin</a>
+          <a href="#background" data-i18n="background">Background</a>
+          <a href="#gap" data-i18n="gap">Gap</a>
+          <a href="#questions" data-i18n="questions">Questions</a>
+          <a href="#method" data-i18n="method">Method</a>
+          <a href="#analysis" data-i18n="analysis">Analysis</a>
+          <a href="#conclusion" data-i18n="conclusion">Conclusion</a>
+          <a href="#reflection" data-i18n="reflection">Reflection</a>
+        </aside>
+        <article class="report-body">
+          <section id="origin"><h3 data-i18n="origin">Origin</h3><p data-i18n="originText">I began with a simple observation from the supplied NV Atlas sample: English subtitle lines often turn an action into a noun, while the Chinese line lets the action remain a verb. The corpus makes that small grammatical shift visible at scale.</p></section>
+          <section id="background"><h3 data-i18n="background">Background</h3><p data-i18n="backgroundText">Nominalization is common in English, especially in formal or compressed dialogue. Chinese can preserve a nominal frame, but it can also recast the event as a direct verb or use a light-verb construction. These choices affect rhythm, emphasis, and how directly an action is presented.</p></section>
+          <section id="gap"><h3 data-i18n="gap">Gap</h3><p data-i18n="gapText">Existing subtitle corpora are large, but they rarely make this particular contrast easy to inspect. A focused explorer can connect a sentence pair, its key term, and its translation strategy in one view, while keeping the original source traceable.</p></section>
+          <section id="questions"><h3 data-i18n="questions">Questions</h3><p data-i18n="questionsText">How often is an English nominalization rendered as a direct Chinese verb? Which terms show the widest range of renderings? Does the pattern hold across the most frequent terms, and what does that suggest about subtitle translation norms?</p></section>
+          <section id="method"><h3 data-i18n="method">Method</h3><p data-i18n="methodText">The corpus contains 500 English-Simplified Chinese sentence pairs from OPUS OpenSubtitles 2024. The supplied CSV records each pair's 1-based sentence ID; I verified those IDs against the official Moses-format release. I retained the supplied key terms and added source, category, human_checked, unit, and rationale fields. Categories were applied with a fixed, documented rule set. A random sample of 50 entries (seed 2026) was marked as human checked.</p><p data-i18n="methodText2">The sample is not a random sample of the full OpenSubtitles collection. It is a focused set of lines containing English nominalizations, so the category proportions describe this corpus, not all subtitles.</p></section>
+          <section id="analysis"><h3 data-i18n="analysis">Analysis</h3><p data-i18n="analysisText">The network shows that a small group of high-frequency terms accounts for much of the data. Attention, permission, vacation, protection, and performance are especially prominent. The treemap and heatmap make the strategy mix visible: direct verb recasting is the largest category, followed by retained nominal frames and a smaller set of light-verb constructions.</p><p data-i18n="analysisText2">The pattern is not a simple one-to-one mapping. The same English term can be rendered with different Chinese verbs, and the selected term view exposes those alternatives. This supports a norm-oriented reading: subtitle translators tend to favor compact, action-oriented Chinese, but they retain nominal framing when the line needs a more formal or event-like emphasis.</p></section>
+          <section id="conclusion"><h3 data-i18n="conclusion">Conclusion</h3><p data-i18n="conclusionText">The explorer turns a repeated grammatical habit into a searchable translation pattern. It shows that nominalization is not merely a word-level issue: it is a choice about how an event is packaged for the viewer.</p></section>
+          <section id="reflection"><h3 data-i18n="reflection">Reflection</h3><p data-i18n="reflectionText">The hardest part was separating a defensible category rule from a plausible-looking label. I learned to check the source IDs, keep the sampling method visible, and treat the charts as evidence to verify against the table rather than decoration. AI helped structure the site and draft the first pass, but the category boundaries and source checks still need human judgment.</p></section>
+        </article>
+      </div>
+    </section>
+
+    <section class="prose-section" id="codebook">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow" data-i18n="codebookEyebrow">Codebook</p>
+          <h2 data-i18n="codebookTitle">Three ways of handling an English nominalization</h2>
+        </div>
+        <p class="section-note" data-i18n="codebookNote">The rules are applied in order. The first matching category wins.</p>
+      </div>
+      <div class="codebook-grid">
+        <article class="code-card"><span class="code-index">01</span><h3 data-i18n="catVerb">Verb recast</h3><p data-i18n="codeVerbDef">The English nominalization is expressed as a direct Chinese verb, with no light-verb frame or explicit nominal marker.</p><p class="code-rule" data-i18n="codeVerbRule">Rule: no light-verb marker and no nominal marker in the Chinese line.</p><p class="code-example">“What is his obsession with you?” → “他咋对你这么痴迷?”</p></article>
+        <article class="code-card"><span class="code-index">02</span><h3 data-i18n="catNominal">Nominal retained</h3><p data-i18n="codeNominalDef">The Chinese line keeps an event-like or nominal frame, often with 的, 性, 化, 度, 感, or a similar marker.</p><p class="code-rule" data-i18n="codeNominalRule">Rule: no light-verb marker, but at least one nominal marker is present.</p><p class="code-example">“A new and flaming engine of destruction...” → “...尝试烧毁...”</p></article>
+        <article class="code-card"><span class="code-index">03</span><h3 data-i18n="catLight">Light verb frame</h3><p data-i18n="codeLightDef">The action is carried by a light verb or verbal frame such as 进行, 加以, 予以, 作出, or 受到.</p><p class="code-rule" data-i18n="codeLightRule">Rule: at least one light-verb marker is present; this takes priority over nominal markers.</p><p class="code-example">“...authorized to order punishment.” → “...可以下令进行处罚”</p></article>
+      </div>
+      <div class="codebook-log">
+        <h3 data-i18n="codebookLogTitle">Codebook log</h3>
+        <p data-i18n="codebookLogText">The first pass used a broad list of nominal markers. It over-counted lines where 的 was only a possessive or relative marker. I kept the marker rule for transparency, but added the light-verb category first so explicit verbal frames are not mislabeled as retained nominals. The category counts should be read as a reproducible first-pass annotation, not a definitive linguistic analysis.</p>
+      </div>
+    </section>
+
+    <section class="prose-section declaration" id="declaration">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow" data-i18n="declarationEyebrow">AI use declaration</p>
+          <h2 data-i18n="declarationTitle">What I used AI for, and what I checked</h2>
+        </div>
+      </div>
+      <div class="declaration-grid">
+        <div><h3 data-i18n="toolsTitle">Tools</h3><p data-i18n="toolsText">OpenAI Codex (GPT-5-based coding agent) for data preparation, interface implementation, and drafting. D3.js for the visualizations.</p></div>
+        <div><h3 data-i18n="aiDidTitle">AI did</h3><p data-i18n="aiDidText">It helped normalize the CSV, draft the codebook rules, build the static site, and write the first version of the report.</p></div>
+        <div><h3 data-i18n="humanDidTitle">I checked</h3><p data-i18n="humanDidText">I verified the source IDs against the official corpus, reviewed the category rules, and checked the 50-entry sample marked human_checked.</p></div>
+        <div><h3 data-i18n="aiWrongTitle">One AI mistake</h3><p data-i18n="aiWrongText">The first category pass treated every 的 as evidence of a retained nominal, which misread ordinary possessive phrases. I noticed it by comparing the rule against sample lines and revised the rule order.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p data-i18n="footerText">NV Atlas · A student corpus explorer for Translation Technology in the Age of AI.</p>
+    <p><a href="https://opus.nlpl.eu/legacy/OpenSubtitles-v2024.php" target="_blank" rel="noreferrer">OpenSubtitles 2024</a> · <a href="https://www.opensubtitles.org/" target="_blank" rel="noreferrer">OpenSubtitles</a></p>
+  </footer>
+
+  <script src="vendor/d3.v7.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
