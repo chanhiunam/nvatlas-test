@@ -47,7 +47,7 @@ def main() -> None:
         raise ValueError(f"Expected 500 source rows, found {len(source_rows)}")
 
     rng = random.Random(SEED)
-    checked_ids = {int(row["id"]) for row in rng.sample(source_rows, CHECK_SAMPLE_SIZE)}
+    verification_ids = sorted(int(row["id"]) for row in rng.sample(source_rows, CHECK_SAMPLE_SIZE))
 
     rows = []
     for row in source_rows:
@@ -62,7 +62,7 @@ def main() -> None:
                 f"sentence id {sentence_id}, sampled 2026-11-05, seed {SEED}"
             ),
             "category": category,
-            "human_checked": "yes" if sentence_id in checked_ids else "no",
+            "human_checked": "no",
             "unit": "sentence pair",
             "key_term": row["English_Nominal"],
             "target_term": row["Chinese_Verb"],
@@ -81,6 +81,8 @@ def main() -> None:
             "seed": SEED,
             "sample_size": len(rows),
             "checked_size": checked,
+            "verification_sample_size": CHECK_SAMPLE_SIZE,
+            "verification_sample_ids": verification_ids,
             "categories": counts,
             "license_note": "Short subtitle excerpts for coursework; source and OpenSubtitles attribution retained.",
         },
@@ -88,7 +90,7 @@ def main() -> None:
     }
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"Wrote {OUTPUT} with {len(rows)} entries and {checked} checked entries")
+    print(f"Wrote {OUTPUT} with {len(rows)} entries; {CHECK_SAMPLE_SIZE} entries queued for manual verification")
     print(dict(counts))
 
 
